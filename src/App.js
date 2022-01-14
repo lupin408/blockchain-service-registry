@@ -161,7 +161,7 @@ async replaceloc(v){
   var servname = document.getElementById('servname1').value;
   var servip = document.getElementById('servip1').value;
   var servindex = this.state.sortedreg[servname][1];
-  window.contract.methods.changeRegistry([servname, servip], this.state.custid, [servindex]).send({from: this.state.acct})
+  window.contract.methods.changeRegistry([servname+' '+servip], this.state.custid, [servindex]).send({from: this.state.acct})
 }
 
   
@@ -191,7 +191,7 @@ async replaceloc(v){
      <div>{this.state.register}</div>
      
 <input type = 'text' id='servname1'></input> <input type = 'text' id='servip1'></input>
-     <button>Replace service location</button>
+     <button onClick={this.replaceloc}>Replace service location</button>
      </div> }
 
      
