@@ -13,27 +13,27 @@ const Common = require('ethereumjs-common').default;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+
+const customCommon = Common.forCustomChain(
+    'mainnet',
+    {
+      name: 'bnb',
+      networkId: 97,
+      chainId: 97,
+    },
+    'petersburg',
+  )
 var abi2 =  JSON.stringify(abi.abi)
-var clientnum = 6;
+//var clientnum = 6;
 console.log(abi2, '16')
 var contract = '';
 async function loadContract() {
-  
     return await new web3.eth.Contract(JSON.parse(abi2), '0xeCefE44efcc1E771a2CF1D99e8037Fd47e37A84E');
-    
     } 
 async function load() {
-   
      contract = await loadContract();
-  
   }
-  
-  
-  
-
-  
-  
-  load();
+     load();
 var acct1 = web3.eth.accounts.create('newentropy')
 console.log(acct1)
 var acctul = web3.eth.accounts.privateKeyToAccount(acct1.privateKey)
@@ -41,7 +41,33 @@ var localregistry = {
 0: ['example twonine', 'elasticbean sixtyfour']    ,
 1: ['exampletwo ninetyone', 'firsthound twentytwo']
 }
+var sortedlocalregistry = {
+    0: [{'example': 'twonine'},
+        {'elasticbean': 'sixtyfour'}],
+    1 : [{'exampletwo': 'ninetyone'},
+       {'firsthound': 'twentytwo'}]
+}
 var balance1 = '0';
+
+function sortlocal(clientidnum){
+    if (clientidnum !== undefined) {
+            localregistry[clientidnum].forEach((stringpair, index) => {
+                let stringarray1 = stringpair.split(' ');
+                sortedlocalregistry[clientidnum][index] = {};
+                sortedlocalregistry[clientidnum][index][stringarray1[0]] = stringarray1[1];
+            })
+    } else {
+        for (var clientreg in localregistry) {
+            localregistry[clientreg].forEach((stringpair, index) => {
+                let stringarray2 = stringpair.split(' ');
+                sortedlocalregistry[clientreg][index] = {};
+                sortedlocalregistry[clientreg][index][stringarray2[0]] = stringarray2[1];
+                
+            })
+        }
+    }
+   
+}
 
 app.use(express.static(path.join(__dirname, '../', 'build')));
 
@@ -57,41 +83,33 @@ app.get('/reqreg', (req, res) => {
    
 })
 
+
+
+
 app.post('/changereg', (req, res) => {
-
-})
-
-app.get('/fundapiuse', (req, res) => {
- res.send(acct1.address)
-})
-
-app.post('/submitreg', (req, res) => {
-
-    if (Array.isArray(req.body.newregistry)) {
-    async function submitregdata(b){
-
-        const customCommon = Common.forCustomChain(
-            'mainnet',
-            {
-              name: 'bnb',
-              networkId: 97,
-              chainId: 97,
-            },
-            'petersburg',
-          )
-
-console.log(acctul)
+  var changeservicearray = req.body.servicetochangearray;
+  var changeiparray = req.body.iptochangearray;
+  var clientid = req.body.clientid + '';
+  var indexarray = [];
+  var changeservicestosend = [];
+    sortedlocalregistry[req.body.clientid].forEach((servippair, index) => {
+        changeservicearray.forEach((servtochange, index1) => {
+            if (servippair[servtochange] !== undefined){
+                changeservicestosend.push(servtochange + " " + changeiparray[index1]);
+                localregistry[clientid][index] = servtochange + " " + changeiparray[index1]
+                indexarray.push(index + '');
+                
+            }
+        })
+    })
+       
+    async function changeregdata(b){
         const privKey = Buffer.from(acctul.privateKey.slice(2), 'hex')
-        const transaction = contract.methods.submitRegistry(req.body.newregistry)
-        console.log(transaction.encodeABI(), 'hi')
-     
+        const transaction = contract.methods.changeRegistry(changeservicestosend, clientid, indexarray)
         const gasPrice = await web3.eth.getGasPrice()
-        console.log(gasPrice)
         const gasPriceHex = '0x' + parseInt(gasPrice ).toString(16);
         const gasLimitHex = '0x' + parseInt('3000000').toString(16);
         var noncey = await web3.eth.getTransactionCount(acctul.address)
-        console.log(web3.utils.toHex(noncey), noncey)
-console.log(gasLimitHex, gasPriceHex, 'gaslimit, gasprice')
         const options = {
             nonce: web3.utils.toHex(noncey),
             to: '0xeCefE44efcc1E771a2CF1D99e8037Fd47e37A84E',
@@ -99,24 +117,62 @@ console.log(gasLimitHex, gasPriceHex, 'gaslimit, gasprice')
             gasLimit: gasLimitHex,
             data: transaction.encodeABI(),
             value: '0x00'
-            
-           
           };
-         
-          console.log(transaction.encodeABI())
-          console.log(privKey)
           var tx = new ethTx(options, {common: customCommon})
-        
           tx.sign(privKey);
           var serializedTx = tx.serialize();
           var rawTxHex = '0x' + serializedTx.toString('hex');
-          
-
-
           web3.eth.sendSignedTransaction(rawTxHex)
           .on('receipt', receipt => { console.log('Receipt: ', receipt);
         res.send('succesfully submitted')
-    localregistry[clientnum] = req.body.newregistry;
+        sortlocal(req.body.clientid)
+    })
+        .catch(error => { console.log('Error: ', error.message);
+    res.send('error changing your registry on the blockchain')
+ });
+     
+      }
+      changeregdata()
+
+    
+})
+
+app.get('/fundapiuse', (req, res) => {
+ res.send(acct1.address)
+})
+
+app.post('/submitreg', (req, res) => {
+    if (Array.isArray(req.body.newregservices) && Array.isArray(req.body.newregips)) {
+    var newregistry = []
+    for (let j = 0; j < req.body.newregservices.length; j++){
+        newregistry.push(req.body.newregservices[j] + ' ' + req.body.newregips)
+    }
+
+   
+    async function submitregdata(b){
+        const privKey = Buffer.from(acctul.privateKey.slice(2), 'hex')
+        const transaction = contract.methods.submitRegistry(newregistry)
+        const gasPrice = await web3.eth.getGasPrice()
+        const gasPriceHex = '0x' + parseInt(gasPrice ).toString(16);
+        const gasLimitHex = '0x' + parseInt('3000000').toString(16);
+        var noncey = await web3.eth.getTransactionCount(acctul.address)
+        const options = {
+            nonce: web3.utils.toHex(noncey),
+            to: '0xeCefE44efcc1E771a2CF1D99e8037Fd47e37A84E',
+            gasPrice: gasPriceHex,
+            gasLimit: gasLimitHex,
+            data: transaction.encodeABI(),
+            value: '0x00'
+          };
+          var tx = new ethTx(options, {common: customCommon})
+          tx.sign(privKey);
+          var serializedTx = tx.serialize();
+          var rawTxHex = '0x' + serializedTx.toString('hex');
+          web3.eth.sendSignedTransaction(rawTxHex)
+          .on('receipt', receipt => { console.log('Receipt: ', receipt);
+        res.send('succesfully submitted')
+    localregistry[req.body.clientid] = newregistry;
+    sortlocal(req.body.clientid)
     })
         .catch(error => { console.log('Error: ', error.message);
     res.send('error uploading your registry to the blockchain')
