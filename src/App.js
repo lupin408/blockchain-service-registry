@@ -15,7 +15,8 @@ class App extends React.Component {
      srts: ['a'],
      custid: 'Enter RegisterID',
      register: '',
-     sortedreg: {}
+     sortedreg: {},
+     userid: ''
   
     
     };
@@ -118,7 +119,7 @@ async submitregdata(b){
  
   console.log(this.state.acct)
   window.contract.methods.submitRegistry(this.state.srts).send({from: this.state.acct})
-  .then(f => this.setState({custid: f}))
+  .then(f => this.setState({userid: f}))
 }
 
 async changedata(c){
@@ -135,7 +136,7 @@ this.setState({srts: [document.getElementById('tf1').value +' '+ document.getEle
 
 async getreg(c){
   window.contract.methods.listgetter(this.state.custid).call()
-  .then(reg => this.sortreg(reg))
+  .then(reg => {this.sortreg(reg); this.setState({register: JSON.stringify(reg)})})
   
 }
 sortreg(v){
@@ -173,26 +174,32 @@ async replaceloc(v){
 
 
   
-
+//<button id='submitreg' onClick={this.submitregdata}>Submit Reg</button>
   render() {
   return (
     <div className="App">
-     {window.ethereum == undefined ?    <div>Please install metamask</div> : <div><button id='connectmetamaskbtn' onClick={this.getAccount}>Connect Metamask to BSC</button> <button id='submitreg' onClick={this.submitregdata}>Submit Reg</button>
+     {window.ethereum == undefined ?    <div>Please install metamask</div> : <div><button id='connectmetamaskbtn' onClick={this.getAccount}>Connect Metamask to BSC</button> 
      
-     <form onSubmit={this.submitregdata}>        <label>
-          Registries List:
+     <form id='form1' onSubmit={this.submitregdata}>        <label id='lbl1'>
+          <h3>Submit new Registry:</h3>
           <input type="text" id='tf1'  onChange={this.handleChange1} />  <input id='tf2' type="text"  onChange={this.handleChange1} /> 
           <input type="text" id='tf3'  onChange={this.handleChange1} />  <input id='tf4' type="text"  onChange={this.handleChange1} /> </label>
-        <input type="submit" value="Submit" />
+        <input id='submitbtn' type="submit" value="Submit" />
+        <div>{this.state.userid}</div>
       </form>
-      
+      <div className='methodbox' id='retrieveregisterdiv'>
+        <h3>Retrieve Service Register</h3>
       <input type='text' value={this.state.custid} onChange={this.handleChange2}></input>
      <button onClick={this.getreg}>Get register</button>
      <div>{this.state.register}</div>
-     
+     </div>
+     <div className='methodbox' id='replaceregisterdiv'>
+       <h3>Change services' IP addresses</h3>
 <input type = 'text' id='servname1'></input> <input type = 'text' id='servip1'></input>
      <button onClick={this.replaceloc}>Replace service location</button>
-     </div> }
+     </div> 
+     </div>
+     }
 
      
  
