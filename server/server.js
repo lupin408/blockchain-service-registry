@@ -142,10 +142,10 @@ app.get('/fundapiuse', (req, res) => {
 })
 
 app.post('/submitreg', (req, res) => {
-    if (Array.isArray(req.body.newregservices) && Array.isArray(req.body.newregips)) {
+    if (Array.isArray(req.body.newregisterservices) && Array.isArray(req.body.newregisterips)) {
     var newregistry = []
-    for (let j = 0; j < req.body.newregservices.length; j++){
-        newregistry.push(req.body.newregservices[j] + ' ' + req.body.newregips)
+    for (let j = 0; j < req.body.newregisterservices.length; j++){
+        newregistry.push(req.body.newregisterservices[j] + ' ' + req.body.newregisterips)
     }
 
    

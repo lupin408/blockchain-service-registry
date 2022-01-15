@@ -1,70 +1,125 @@
-# Getting Started with Create React App
+# Primitive Blockchain Serivce Registry API
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is simply a "proof-of-concept" for storing/changing/reading data pairs on the blockchain, specifically service names and their respective locations.
 
-## Available Scripts
+## GUI
 
-In the project directory, you can run:
+Incase someone needs it, or you are having trouble sending API requests directly, there is a graphical user interface included in this project. It it hosted at the same location that the API requests are sent to. Simply open your browser to the location which server.js is listening.
 
-### `npm start`
+## Available API requests
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+To the URL your server.js is listening at, you can send:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### `POST: /submitreg`
 
-### `npm test`
+Submits your registry to the blockchain.
+Server account address must have sufficient balance of currency to write to the blockchain.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Parameters are ({"newregisterservices":["service1_name", "service2_name", ... ], "newregisterips":["service1_ip", "service2_ip"], "clientid": "clientidnumber"})
 
-### `npm run build`
+Example using JavaScript - Fetch
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+var raw = JSON.stringify({"newregisterservices":["elastic-beanstalk","ledgerboard"],"newregisterips":["127.1.0.137","193.41.3.180"],"clientid":"6"});
 
-### `npm run eject`
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+fetch("http://localhost:3000/submitreg", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+ ### `POST: /changereg`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Submits changes of IP addresses of your services to the blockchain.
+Server account address must have sufficient balance of currency to write to the blockchain.
 
-## Learn More
+Parameters are ({"servicetochangearray":["name_of_service_to_udpate_ip_for1", "name_of_service_to_udpate_ip_for2", ... ], "iptochangearray":["service1_new_ip", "service2_new_ip"], "clientid": "clientidnumber"})
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Example using JavaScript - Fetch
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
 
-### Code Splitting
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+var raw = JSON.stringify({"servicetochangearray":["name_of_service_to_udpate_ip_for1","name_of_service_to_udpate_ip_for2"],"iptochangearray":["service1_new_ip","service2_new_ip"],"clientid":"clientidnumber"});
 
-### Analyzing the Bundle Size
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+fetch("http://localhost:3000/changereg", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
 
-### Making a Progressive Web App
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### `GET: /reqreg`
+
+Returns client's service register from the blockchain.
+This does not require the server account address to have been funded.
+
+Parameters are ({"clientid": "client_id_number"})
+
+```
+
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+var raw = JSON.stringify({"clientid":"client_id_number"});
+
+var requestOptions = {
+  method: 'GET',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+fetch("http://localhost:3000/reqreg", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
+
+  ```
+
+### `GET: /fundapiuse`
+
+Returns the address to fund. Writing to the blockchain requires that the server account wallet associated with the client's client_id send the blockchain's native currency (amount depends on type and quantity of operations). This API requests returns the address the client should fund if balance runs out.
+
 
 ### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Can choose a specific port that the API listens to. Go into server/server.js and change '3000' on line 187 with your desired port.
 
 ### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+In the directory that you download this project to, in the command line type:
+```
+npm install
+```
+Then type 
+```
+npm run build
+```
+then
+```
+node server/server.js
+```
+By default, it is listening on port 3000.
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
