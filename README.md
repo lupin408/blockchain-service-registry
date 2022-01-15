@@ -1,6 +1,6 @@
 # Primitive Blockchain Serivce Registry API
 
-This project is simply a "proof-of-concept" for storing/changing/reading data pairs on the blockchain, specifically service names and their respective locations.
+This project is simply a proof-of-concept for storing/changing/reading data pairs on the blockchain, specifically service names and their respective locations.
 
 ## GUI
 
@@ -100,7 +100,7 @@ fetch("http://localhost:3000/reqreg", requestOptions)
 
 ### `GET: /fundapiuse`
 
-Returns the address to fund. Writing to the blockchain requires that the server account wallet associated with the client's client_id send the blockchain's native currency (amount depends on type and quantity of operations). This API requests returns the address the client should fund if balance runs out.
+Returns the address to fund. Writing to the blockchain requires that the server account wallet associated with the API user send the blockchain's native currency (amount depends on type and quantity of operations). This API requests returns the address the client should fund if balance runs out.
 
 
 ### Advanced Configuration
@@ -121,5 +121,5 @@ then
 ```
 node server/server.js
 ```
-By default, it is listening on port 3000.
+By default, it should be listening on port 3000.
 
