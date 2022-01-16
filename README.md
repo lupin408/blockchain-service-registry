@@ -50,7 +50,7 @@ Server account address must have sufficient balance of currency to write to the 
 
 Parameters are: 
 ```
-{"servicetochangearray":["name_of_service_to_udpate_ip_for1", "name_of_service_to_udpate_ip_for2", ... ], "iptochangearray":["service1_new_ip", "service2_new_ip"], "clientid": "clientidnumber"}
+{"servicetochangearray":["name_of_service_to_udpate_ip_for1", "name_of_service_to_udpate_ip_for2", ... ], "iptochangearray":["service1_new_ip", "service2_new_ip"], "registerid": "registeridnumber"}
 ```
 
 Example using JavaScript - Fetch
@@ -60,7 +60,7 @@ Example using JavaScript - Fetch
 var myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
 
-var raw = JSON.stringify({"servicetochangearray":["name_of_service_to_udpate_ip_for1","name_of_service_to_udpate_ip_for2"],"iptochangearray":["service1_new_ip","service2_new_ip"],"clientid":"clientidnumber"});
+var raw = JSON.stringify({"servicetochangearray":["name_of_service_to_udpate_ip_for1","name_of_service_to_udpate_ip_for2"],"iptochangearray":["service1_new_ip","service2_new_ip"],"registerid":"registeridnumber"});
 
 var requestOptions = {
   method: 'POST',

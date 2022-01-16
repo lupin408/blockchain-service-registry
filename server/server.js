@@ -151,10 +151,10 @@ app.get('/reqreg', (req, res) => {
 app.post('/changereg', (req, res) => {
 
     //check if correct arguments were sent
-    if ((req.body.servicetochangearray !== undefined) && (req.body.iptochangearray !== undefined) && (req.body.clientid !== undefined)) {
+    if ((req.body.servicetochangearray !== undefined) && (req.body.iptochangearray !== undefined) && (req.body.registerid !== undefined)) {
   var changeservicearray = req.body.servicetochangearray;
   var changeiparray = req.body.iptochangearray;
-  var clientid = req.body.clientid + '';
+  var registerid = req.body.registerid + '';
 
   //contract expects array of index numbers to change the IPs at. 
   var indexarray = [];
@@ -167,10 +167,10 @@ app.post('/changereg', (req, res) => {
   async function refreshlocal(){
 
       //if sortedregistry does not have data for that id, then it will retrieve it from the blockchain
-    if (sortedlocalregistry[req.body.clientid] == undefined){
-        localregistry[req.body.clientid] = await contract.methods.listgetter(req.body.clientid).call()
+    if (sortedlocalregistry[req.body.registerid] == undefined){
+        localregistry[req.body.registerid] = await contract.methods.listgetter(req.body.registerid).call()
      
-        return localregistry[req.body.clientid]
+        return localregistry[req.body.registerid]
         //NOTE: once a register is in the localregistry, it will be updated serverside every time it gets update clientside, so it
         //is always up to date after it first gets populated in localregistry.
     }
@@ -180,7 +180,7 @@ app.post('/changereg', (req, res) => {
   async function changeregdata(b){
     const privKey = Buffer.from(acctul.privateKey.slice(2), 'hex')
     //uses the contract interface to acquire the data to be sent
-    const transaction = contract.methods.changeRegistry(changeservicestosend, clientid, indexarray)
+    const transaction = contract.methods.changeRegistry(changeservicestosend, registerid, indexarray)
     //get estimated gas price for transaction and convert to 0x-prefaced hexidecimal
     const gasPrice = await web3.eth.getGasPrice()
     const gasPriceHex = '0x' + parseInt(gasPrice ).toString(16);
@@ -208,7 +208,7 @@ app.post('/changereg', (req, res) => {
     //send client confirmation
     res.send('succesfully submitted')
     //update local register mirrors
-    sortlocal(req.body.clientid)
+    sortlocal(req.body.registerid)
 })
     //error handling
     .catch(error => { console.log('Error: ', error.message);
@@ -220,12 +220,12 @@ res.send('error changing your registry on the blockchain')
   refreshlocal()
   .then(f => {
       //sort local register mirrors to reflect change
-      sortlocal(req.body.clientid)
-      sortedlocalregistry[req.body.clientid].forEach((servippair, index) => {
+      sortlocal(req.body.registerid)
+      sortedlocalregistry[req.body.registerid].forEach((servippair, index) => {
         changeservicearray.forEach((servtochange, index1) => {
             if (servippair[servtochange] !== undefined){
                 changeservicestosend.push(servtochange + " " + changeiparray[index1]);
-                localregistry[clientid][index] = servtochange + " " + changeiparray[index1]
+                localregistry[registerid][index] = servtochange + " " + changeiparray[index1]
                 indexarray.push(index + '');
                 
             }
@@ -288,10 +288,10 @@ app.post('/submitreg', (req, res) => {
           //send transaction
           web3.eth.sendSignedTransaction(rawTxHex)
           .on('receipt', receipt => { console.log('Receipt: ', receipt);
-        //send client confirmation
-        res.send('succesfully submitted')
         //parse emitted data
-        var newregid = parseInt(receipt.logs.data, 16).toString()
+        var newregid = parseInt(receipt.logs[0].data, 16).toString()
+        //send client registerID number
+        res.send(newregid)
     //add to local register mirrors
     localregistry[newregid] = newregistry;
     sortlocal(newregid)

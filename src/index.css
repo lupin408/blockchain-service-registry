@@ -19,8 +19,8 @@ button, #submitbtn{
   border-radius: 2px;
   box-shadow: 1px 1px 1px 1px white;
   position: absolute;
-  top: 100px;
-  height: 300px;
+  top: 60px;
+  height: 400px;
 }
 #retrieveregisterdiv{
 height: 700px;
@@ -40,7 +40,7 @@ padding-top: 5px;
 #replaceregisterdiv{
   margin-left: 60%;
   position: absolute;
-  top: 480px;
+  top: 500px;
   height: 300px;
   max-width: 600px;
 }
@@ -73,4 +73,23 @@ right: 200px;
 #returnedid{
   position: relative;
   top: 30px;
+}
+h6{
+  margin:0%;
+  padding: 0%;
+  max-width: 150px;
+  color: orange;
+  font-family: 'Abel', sans-sarif;
+  text-shadow: 0px 0px 1px white;
+  font-size: larger;
+}
+#iph6{
+  position: relative;
+  left: 300px;
+  bottom: 10px;
+}
+#snh6{
+  position: relative;
+  top: 14px;
+  left: 100px;
 }
