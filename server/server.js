@@ -9,16 +9,13 @@ const app = express();
 const abi = require('./abicode.js');
 const ethTx = require('ethereumjs-tx').Transaction
 const Common = require('ethereumjs-common').default;
-/*
-------------ADD IN ON SERVER FOR HTTPS------------
+
 const https = require('https');
 const fs = require('fs');
-var cert = fs.readFileSync('/etc/letsencrypt/live/ericsweb3api.com/fullchain.pem');
-var key = fs.readFileSync('/etc/letsencrypt/live/ericsweb3api.com/privkey.pem');
+var cert = fs.readFileSync('/etc/letsencrypt/live/www.ericsweb3api.com/fullchain.pem');
+var key = fs.readFileSync('/etc/letsencrypt/live/www.ericsweb3api.com/privkey.pem');
 var options = { key: key, cert: cert };
 
-NOTE: SSL certs must be generated first
-*/
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -324,17 +321,16 @@ app.post('/submitreg', (req, res) => {
 //Port number to listen on. Default is 3000. 
 const PORT = 3000; //Change to 443 for HTTPS
 
-
+/*
 //start listening
 app.listen(PORT, () => {                      //comment out for HTTPS
   console.log(`Server listening on ${PORT}`); //comment out for HTTPS
 });                                           //comment out for HTTPS
+*/
 
 
 
-/* ------MUST BE ADDED IN FOR HTTPS-------------
 var server = https.createServer(options, app);
 server.listen(PORT, () => {
      console.log(`Server listening on ${PORT}`);
  });
-*/
