@@ -15,7 +15,10 @@ To the URL your server.js is listening at, you can send:
 Submits your registry to the blockchain.
 Server account address must have sufficient balance of currency to write to the blockchain.
 
-Parameters are ({"newregisterservices":["service1_name", "service2_name", ... ], "newregisterips":["service1_ip", "service2_ip"], "clientid": "clientidnumber"})
+Parameters are: 
+````
+{"newregisterservices":["service1_name", "service2_name", ... ], "newregisterips":["service1_ip", "service2_ip"]}
+````
 
 Example using JavaScript - Fetch
 
@@ -24,7 +27,7 @@ Example using JavaScript - Fetch
 var myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
 
-var raw = JSON.stringify({"newregisterservices":["elastic-beanstalk","ledgerboard"],"newregisterips":["127.1.0.137","193.41.3.180"],"clientid":"6"});
+var raw = JSON.stringify({"newregisterservices":["elastic-beanstalk","ledgerboard"],"newregisterips":["127.1.0.137","193.41.3.180"]});
 
 var requestOptions = {
   method: 'POST',
@@ -45,7 +48,10 @@ fetch("http://localhost:3000/submitreg", requestOptions)
 Submits changes of IP addresses of your services to the blockchain.
 Server account address must have sufficient balance of currency to write to the blockchain.
 
-Parameters are ({"servicetochangearray":["name_of_service_to_udpate_ip_for1", "name_of_service_to_udpate_ip_for2", ... ], "iptochangearray":["service1_new_ip", "service2_new_ip"], "clientid": "clientidnumber"})
+Parameters are: 
+```
+{"servicetochangearray":["name_of_service_to_udpate_ip_for1", "name_of_service_to_udpate_ip_for2", ... ], "iptochangearray":["service1_new_ip", "service2_new_ip"], "clientid": "clientidnumber"}
+```
 
 Example using JavaScript - Fetch
 
@@ -75,14 +81,14 @@ fetch("http://localhost:3000/changereg", requestOptions)
 Returns client's service register from the blockchain.
 This does not require the server account address to have been funded.
 
-Parameters are ({"clientid": "client_id_number"})
+Parameters are ({"registerid": "register_id_number"})
 
 ```
 
 var myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
 
-var raw = JSON.stringify({"clientid":"client_id_number"});
+var raw = JSON.stringify({"registerid":"register_id_number"});
 
 var requestOptions = {
   method: 'GET',

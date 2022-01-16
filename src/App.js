@@ -3,6 +3,7 @@ import './App.css';
 import Web3 from 'web3';
 import React from 'react';
 import abi from './abicode.js'
+import abiDecoder from 'abi-decoder'
 
 
 
@@ -16,7 +17,8 @@ class App extends React.Component {
      custid: 'Enter RegisterID',
      register: '',
      sortedreg: {},
-     userid: ''
+     userid: '',
+     regid: 'RegisterID'
   
     
     };
@@ -24,12 +26,13 @@ class App extends React.Component {
     this.injectweb3andcontract = this.injectweb3andcontract.bind(this);
     this.submitregdata = this.submitregdata.bind(this);
     this.bg = this.bg.bind(this);
-    this.handleChange1 = this.handleChange1.bind(this);
     this.getreg = this.getreg.bind(this);
-    this.handleChange2 = this.handleChange2.bind(this);
     this.sortreg = this.sortreg.bind(this);
     this.changedata = this.changedata.bind(this);
     this.replaceloc = this.replaceloc.bind(this);
+    this.handleChange1 = this.handleChange1.bind(this);
+    this.handleChange2 = this.handleChange2.bind(this);
+    this.handleChange3 = this.handleChange3.bind(this);
   }
  
   
@@ -68,7 +71,10 @@ injectweb3andcontract(c) {
   
   async function loadContract() {
   //0x328A072863D1AB1F9Fc094487ee0314c8E0d7523
-  return await new window.web3.eth.Contract(JSON.parse(abi2), '0xeCefE44efcc1E771a2CF1D99e8037Fd47e37A84E');
+//previous test contract address: 0xeCefE44efcc1E771a2CF1D99e8037Fd47e37A84E
+
+  
+  return await new window.web3.eth.Contract(JSON.parse(abi2), '0xf0fB31D088ce9C01132B3f70e9195E08fAf1F92d' );
   
   } 
   load();
@@ -119,7 +125,23 @@ async submitregdata(b){
  
   console.log(this.state.acct)
   window.contract.methods.submitRegistry(this.state.srts).send({from: this.state.acct})
-  .then(f => this.setState({userid: f}))
+  .then(txOutput => {
+    console.log(txOutput.events.newRegistry.returnValues.value)
+    this.setState({userid: txOutput.events.newRegistry.returnValues.value})
+    /*
+    window.web3.eth.getTransaction(txOutput.transactionHash, (err, tx) => {
+      console.log(tx, 'transaction')
+      
+    })
+    window.web3.eth.getTransactionReceipt(txOutput.transactionHash, (err, tx) => {
+      console.log(tx, 'transactionhash')
+      console.log(tx.logs[0])
+      const decodedLogs = abiDecoder.decodeLogs(tx.logs[0])
+      console.log(decodedLogs)
+    }) */
+   //var results1 = window.web3.eth.abi.decodeParameter("uint256", txOutput)
+    //console.log(results1)
+  })
 }
 
 async changedata(c){
@@ -157,12 +179,19 @@ sortreg(v){
 handleChange2(event){
   this.setState({custid: event.target.value})
 }
+handleChange3(event){
+  this.setState({regid: event.target.value})
+  console.log(this.state.regid)
+}
 
+handleFocus(event){
+  event.target.select();
+}
 async replaceloc(v){
   var servname = document.getElementById('servname1').value;
   var servip = document.getElementById('servip1').value;
   var servindex = this.state.sortedreg[servname][1];
-  window.contract.methods.changeRegistry([servname+' '+servip], this.state.custid, [servindex]).send({from: this.state.acct})
+  window.contract.methods.changeRegistry([servname+' '+servip], this.state.regid, [servindex]).send({from: this.state.acct})
 }
 
   
@@ -180,23 +209,24 @@ async replaceloc(v){
     <div className="App">
      {window.ethereum == undefined ?    <div>Please install metamask</div> : <div><button id='connectmetamaskbtn' onClick={this.getAccount}>Connect Metamask to BSC</button> 
      
-     <form id='form1' onSubmit={this.submitregdata}>        <label id='lbl1'>
+     <form id='form1' onSubmit={this.submitregdata}> <label id='lbl1'>
           <h3>Submit new Registry:</h3>
-          <input type="text" id='tf1'  onChange={this.handleChange1} />  <input id='tf2' type="text"  onChange={this.handleChange1} /> 
-          <input type="text" id='tf3'  onChange={this.handleChange1} />  <input id='tf4' type="text"  onChange={this.handleChange1} /> </label>
+          <input type="text" id='tf1' defaultValue='Service name' onChange={this.handleChange1} onFocus={this.handleFocus} />  <input id='tf2' defaultValue='IP address' type="text"  onChange={this.handleChange1} onFocus={this.handleFocus} /> 
+          <input type="text" id='tf3' defaultValue='Service name' onChange={this.handleChange1} onFocus={this.handleFocus} />  <input id='tf4' type="text" defaultValue='IP address' onChange={this.handleChange1} onFocus={this.handleFocus} /> </label>
         <input id='submitbtn' type="submit" value="Submit" />
-        <div>{this.state.userid}</div>
+        <div id='returnedid'>RegistryID: {this.state.userid}</div>
       </form>
       <div className='methodbox' id='retrieveregisterdiv'>
         <h3>Retrieve Service Register</h3>
-      <input type='text' value={this.state.custid} onChange={this.handleChange2}></input>
+      <input type='text' value={this.state.custid} onFocus={this.handleFocus} onChange={this.handleChange2}></input>
      <button onClick={this.getreg}>Get register</button>
      <div>{this.state.register}</div>
      </div>
      <div className='methodbox' id='replaceregisterdiv'>
        <h3>Change services' IP addresses</h3>
-<input type = 'text' id='servname1'></input> <input type = 'text' id='servip1'></input>
-     <button onClick={this.replaceloc}>Replace service location</button>
+<input type = 'text' defaultValue='Service name' id='servname1' onFocus={this.handleFocus} ></input> <input type = 'text' defaultValue='New IP' id='servip1' onFocus={this.handleFocus}></input>
+<input type= 'text' id='regid1' value={this.state.regid} onFocus={this.handleFocus} onChange={this.handleChange3}></input>
+     <button id='replacebtn' onClick={this.replaceloc}>Replace service location</button>
      </div> 
      </div>
      }

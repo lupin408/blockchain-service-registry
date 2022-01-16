@@ -5,6 +5,19 @@ const abi =  [
 		"type": "constructor"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "newRegistry",
+		"type": "event"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "string[]",
@@ -55,13 +68,7 @@ const abi =  [
 			}
 		],
 		"name": "submitRegistry",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},

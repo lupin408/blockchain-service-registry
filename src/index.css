@@ -27,6 +27,7 @@ height: 700px;
 max-height: 50%;
 margin-left: 10%;
 max-width: 50%;
+padding-top: 5px;
 }
 .methodbox{
  
@@ -57,4 +58,19 @@ h3{
   position: relative;
   right: 94px;
   top: 10px;
+}
+#regid1{
+  margin-left: 170px;
+  position: relative;
+  bottom: 15px;
+}
+#replacebtn{
+position: relative;
+top: 20px;
+right: 200px;
+
+}
+#returnedid{
+  position: relative;
+  top: 30px;
 }
