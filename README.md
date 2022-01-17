@@ -81,7 +81,12 @@ fetch("http://examplesite.com/changereg", requestOptions)
 Returns client's service register from the blockchain.
 This does not require the server account address to have been funded.
 
-Parameters are ({"registerid": "REGISTER_ID_NUMBER"})
+Parameters are:
+```
+({"registerid": "REGISTER_ID_NUMBER"})
+```
+
+Example using JavaScript - Fetch
 
 ```
 
