@@ -128,4 +128,11 @@ then
 node server/server.js
 ```
 By default, it should be listening on port 3000.
+If not being hosted locally, add the following line to your package.json file:
+```
+ "homepage":"EXAMPLE_HOMEPAGE",
+```
 
+### Miscellaneous
+
+Functionality for adding services to a pre-existing registry will be added in v1.1
