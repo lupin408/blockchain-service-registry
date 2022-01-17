@@ -3,55 +3,67 @@ pragma solidity >=0.7.0 <0.9.0;
 pragma experimental ABIEncoderV2;
 /**
  * @title ServiceRegisty
+ * @dev Facilitates the blockchain-based storage and retrieval of service names and their IP addresses 
  */
 contract ServiceRegistry {
-   
-   /* struct Servicelocation {
-      string  servicename;
-      string ipaddress;
-      string extra;
-    } */
-    //string[][] public stringarar;
-
-  //Servicelocation[]  serloc;
+    //@dev Emits the registerID of newly submitted register
+   event newRegistry(    
+       uint value        
+   );
+   //keeps track of number of submitted registers
    uint private usernumber;
-    //Servicelocation[] public servicelist1;
+    //@dev this mapping is where the registries are stored at in arrays, linked to their respective registry IDs 
     mapping(uint => string[]) public  userservicelist;
  
+
+
     constructor()  {
    usernumber = 0;
-   
-  // serloc = [Servicelocation('hello', 'fifty')];
    }
  
    
-   
+   /** 
+     * @dev Allows msg.sender to submit registry to the blockchain
+     * @param serviceloc is the registry in an array of properly formatted strings: ['exampleservice1 exampleip1', 'exampleservice2 exampleip2']
+     */
  
-   
-    function submitRegistry(string[] calldata serviceloc) public returns (uint256) {
+    function submitRegistry(string[] calldata serviceloc) public  {
         usernumber++;
         for (uint i = 0; i < serviceloc.length; i++) {
             userservicelist[usernumber].push(serviceloc[i]);
-            //userservicelist[1][0]
+            
         }
-      //userservicelist[usernumber] = serviceloc;
- 
+      
+    
+     emit newRegistry(usernumber);
      
-     return usernumber;
        
     }
    
+    /** 
+     * @dev Allows client to change already-submitted registry 
+     * @param serviceloc2 is an array of properly formatted strings: ['exampleservice1 newip1', 'exampleservice2 newip2'] for each service that
+     * msg.sender wishes to change
+     * @param usr is the uint representing the registry ID number that msg.sender wants to change
+     * @param servicestochange is an array containing the indices (in the registry) of the services msg.sender wishes to change
+     * @dev these design of this function (replacing at user supplied indices) was decided upon to reduce to operations required on-chain, as
+     * comparing strings by kekkack256 hashing is more resource intensive than this method (which requires more complexity off-chain)
+     */
+
     function changeRegistry (string[] calldata serviceloc2, uint usr, uint[] calldata servicestochange) public {
-      //userservicelist[usr] = serviceloc2;
+      
       for (uint i = 0; i < servicestochange.length; i++) {
             userservicelist[usr][servicestochange[i]] = serviceloc2[i];
  
         }
     }
-    function test1 (uint[] memory sss) public pure returns(uint){
- 
-        return sss[0];
-    }
+
+    
+     /** 
+     * @dev returns service registry to caller when supplied a registry ID
+     * @param userid is the uint representing a registry ID number
+     */
+
     function listgetter(uint userid) public view returns( string[] memory){
         return userservicelist[userid];
     }
