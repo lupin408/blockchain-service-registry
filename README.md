@@ -1,6 +1,6 @@
 # Primitive Blockchain Serivce Registry API
 
-This project is simply a proof-of-concept for storing/changing/reading data pairs on the blockchain, specifically service names and their respective locations.
+This project is simply a proof-of-concept for storing/changing/reading data pairs on the blockchain, specifically service names and their respective locations. Contract is currently deployed on Binance Smart Chain Testnet. An example API is running on https://ericsweb3api.com for people to use (feel free to send requests with Postman :smile:). Use lightly, only intended as an example (very small-scale use).
 
 ## GUI
 
@@ -17,7 +17,7 @@ Server account address must have sufficient balance of currency to write to the 
 
 Parameters are: 
 ````
-{"newregisterservices":["service1_name", "service2_name", ... ], "newregisterips":["service1_ip", "service2_ip"]}
+{"newregisterservices":["SERVICE1_NAME", "SERVICE2_NAME", ... ], "newregisterips":["SERVICE1_IP", "SERVICE2_IP"]}
 ````
 
 Example using JavaScript - Fetch
@@ -36,7 +36,7 @@ var requestOptions = {
   redirect: 'follow'
 };
 
-fetch("http://localhost:3000/submitreg", requestOptions)
+fetch("http://examplesite.com/submitreg", requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
@@ -50,7 +50,7 @@ Server account address must have sufficient balance of currency to write to the 
 
 Parameters are: 
 ```
-{"servicetochangearray":["name_of_service_to_udpate_ip_for1", "name_of_service_to_udpate_ip_for2", ... ], "iptochangearray":["service1_new_ip", "service2_new_ip"], "registerid": "registeridnumber"}
+{"servicetochangearray":["SERVICE1_NAME", "SERVICE2_NAME", ... ], "iptochangearray":["NEW_IP1", "NEW_IP2"], "registerid": "REGISTER_ID_NUMBER"}
 ```
 
 Example using JavaScript - Fetch
@@ -69,7 +69,7 @@ var requestOptions = {
   redirect: 'follow'
 };
 
-fetch("http://localhost:3000/changereg", requestOptions)
+fetch("http://examplesite.com/changereg", requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
@@ -81,7 +81,7 @@ fetch("http://localhost:3000/changereg", requestOptions)
 Returns client's service register from the blockchain.
 This does not require the server account address to have been funded.
 
-Parameters are ({"registerid": "register_id_number"})
+Parameters are ({"registerid": "REGISTER_ID_NUMBER"})
 
 ```
 
@@ -97,7 +97,7 @@ var requestOptions = {
   redirect: 'follow'
 };
 
-fetch("http://localhost:3000/reqreg", requestOptions)
+fetch("http://examplesite.com/reqreg", requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
